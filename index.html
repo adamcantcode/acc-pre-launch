@@ -6,7 +6,11 @@
 </head>
 <body style="background: #000; margin:0; cursor:none;">
     <div style="display: flex;justify-content: center;align-items: center;height: 100vh;width: 100vw;">
-        <h1 style="color: #FFF; font-family: Arial, Helvetica, sans-serif;">no really, he can't.</h1>
+        <h1 style="color: #FFF; font-family: Arial, Helvetica, sans-serif;">don't need to.</h1>
+        <p style="color: #FFF; font-family: Arial, Helvetica, sans-serif;" id="age"></p>
     </div>
+    <script>
+        const startDate=new Date("1995-03-23T00:00:00");function updateTime(){const t=(new Date-startDate)/(525949.2*60*1e3);document.getElementById("age").textContent=t.toFixed(10)}setInterval(updateTime,1);
+    </script>
 </body>
 </html>
