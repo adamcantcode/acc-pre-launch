@@ -10,7 +10,84 @@
         <p style="color: #FFF; font-family: Arial, Helvetica, sans-serif;" id="age"></p>
     </div>
     <div class="overlay"></div>
-    <script>document.addEventListener("DOMContentLoaded",(()=>{document.addEventListener("mousemove",(e=>{const t=["#FF5733","#33FF57","#3357FF","#F1C40F","#8E44AD"],n=t[Math.floor(Math.random()*t.length)],o=document.createElement("div");o.classList.add("cursor-ring"),o.style.width="100px",o.style.height="100px",o.style.left=e.pageX-50+"px",o.style.top=e.pageY-50+"px",o.style.backgroundColor=n,document.body.appendChild(o),setTimeout((()=>{o.remove()}),5e3)}));const e=new Date("1995-03-23T00:00:00");setInterval((function(){const t=(new Date-e)/(525949.2*60*1e3);document.getElementById("age").textContent=t.toFixed(10)}),1)}));</script>
-    <style>.cursor-ring,.overlay{position:absolute;pointer-events:none}body{margin:0;overflow:hidden;height:100vh;background-color:#000;position:relative}.overlay{top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(25px);z-index:10}.cursor-ring{border-radius:50%;animation:5s ease-out infinite expand}@keyframes expand{0%{transform:scale(0);opacity:1}100%{transform:scale(5);opacity:0}}</style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const colors = ["#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#8E44AD"];
+            const maxCircles = 20; // Limit number of active circles
+            let circles = [];
+            let lastMove = 0;
+
+            document.addEventListener("mousemove", (e) => {
+                const now = performance.now();
+                if (now - lastMove < 50) return; // Throttle to 20 FPS
+                lastMove = now;
+
+                if (circles.length >= maxCircles) {
+                    const oldest = circles.shift();
+                    oldest.remove();
+                }
+
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const circle = document.createElement("div");
+                circle.classList.add("cursor-ring");
+                circle.style.left = `${e.pageX - 50}px`;
+                circle.style.top = `${e.pageY - 50}px`;
+                circle.style.backgroundColor = color;
+
+                document.body.appendChild(circle);
+                circles.push(circle);
+
+                setTimeout(() => {
+                    if (circles.includes(circle)) {
+                        circles.splice(circles.indexOf(circle), 1);
+                        circle.remove();
+                    }
+                }, 3000);
+            });
+
+            // Age calculator optimization
+            const birthDate = new Date("1995-03-23T00:00:00");
+            function updateAge() {
+                const ageInYears = (new Date() - birthDate) / (525949.2 * 60 * 1000);
+                document.getElementById("age").textContent = ageInYears.toFixed(10);
+                requestAnimationFrame(updateAge);
+            }
+            updateAge();
+        });
+    </script>
+
+    <style>
+        .cursor-ring, .overlay {
+            position: absolute;
+            pointer-events: none;
+        }
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            background-color: #000;
+            position: relative;
+        }
+        .overlay {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .8);
+            backdrop-filter: blur(25px);
+            z-index: 10;
+        }
+        .cursor-ring {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            animation: expand 3s ease-out forwards;
+        }
+        @keyframes expand {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(5); opacity: 0; }
+        }
+    </style>
 </body>
 </html>
