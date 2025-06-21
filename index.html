@@ -5,7 +5,7 @@
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/adamcantcode/acc-pre-launch/refs/heads/main/favicon.ico">
 </head>
 <body style="background: #000; margin:0; cursor:none;">
-    <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;height: 100vh;width: 100vw;position: relative;z-index:100">
+    <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;width:100vw;position:relative;z-index:100">
         <h1 style="color: #FFF; font-family: Arial, Helvetica, sans-serif;">don't need to.</h1>
         <p style="color: #FFF; font-family: Arial, Helvetica, sans-serif;" id="age"></p>
     </div>
@@ -14,21 +14,21 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const colors = ["#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#8E44AD"];
-            const maxCircles = 20; // Limit number of active circles
-            let circles = [];
+            const MAX_CIRCLES = 20;
+            const circles = [];
             let lastMove = 0;
 
             document.addEventListener("mousemove", (e) => {
                 const now = performance.now();
-                if (now - lastMove < 50) return; // Throttle to 20 FPS
+                if (now - lastMove < 50) return; // throttle to ~20fps
                 lastMove = now;
 
-                if (circles.length >= maxCircles) {
+                if (circles.length >= MAX_CIRCLES) {
                     const oldest = circles.shift();
                     oldest.remove();
                 }
 
-                const color = colors[Math.floor(Math.random() * colors.length)];
+                const color = colors[(Math.random() * colors.length) | 0];
                 const circle = document.createElement("div");
                 circle.classList.add("cursor-ring");
                 circle.style.left = `${e.pageX - 50}px`;
@@ -39,20 +39,23 @@
                 circles.push(circle);
 
                 setTimeout(() => {
-                    if (circles.includes(circle)) {
-                        circles.splice(circles.indexOf(circle), 1);
+                    const idx = circles.indexOf(circle);
+                    if (idx !== -1) {
+                        circles.splice(idx, 1);
                         circle.remove();
                     }
                 }, 3000);
             });
 
-            // Age calculator optimization
+            // Age calculator
+            const MS_PER_YEAR = 31556952000;
             const birthDate = new Date("1995-03-23T00:00:00");
-            function updateAge() {
-                const ageInYears = (new Date() - birthDate) / (525949.2 * 60 * 1000);
-                document.getElementById("age").textContent = ageInYears.toFixed(10);
+            const ageEl = document.getElementById("age");
+            const updateAge = () => {
+                const age = (Date.now() - birthDate) / MS_PER_YEAR;
+                ageEl.textContent = age.toFixed(10);
                 requestAnimationFrame(updateAge);
-            }
+            };
             updateAge();
         });
     </script>
